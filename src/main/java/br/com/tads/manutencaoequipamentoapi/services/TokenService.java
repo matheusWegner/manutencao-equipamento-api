@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.tads.manutencaoequipamentoapi.entities.dto.user.LoginDTO;
-import br.com.tads.manutencaoequipamentoapi.entities.dto.user.UserDTO;
-import br.com.tads.manutencaoequipamentoapi.entities.entity.User;
+import br.com.tads.manutencaoequipamentoapi.models.dto.user.LoginDTO;
+import br.com.tads.manutencaoequipamentoapi.models.dto.user.UserDTO;
+import br.com.tads.manutencaoequipamentoapi.models.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -65,13 +65,15 @@ public class TokenService {
                 .build()
                 .parseClaimsJws(token).getBody();
         ObjectMapper mapper = new ObjectMapper();
-        UserDTO user = null;
+        User user = null;
         try {
-            user = mapper.readValue(claims.getSubject(), UserDTO.class);
-        } catch (JsonProcessingException e) {
+            user = userService.findById(Long.parseLong(claims.getSubject()));
+            return user.getId();
+        }  catch (Exception e) {
             e.printStackTrace();
-        }
-        return user.id();
+        } 
+
+        return null;
     }
 
     @Transactional
@@ -80,18 +82,20 @@ public class TokenService {
         Date dateExpiration = new Date(today.getTime() + Long.parseLong(expiration));
         String token = null;
 
-        User user = userService.findByEmail(loginDTO.email());
+        User user = userService.findByEmail(loginDTO.email() , true);
         String senha = userService.findById(user.getId()).getPassword();
         em.refresh(user);
         user.setSenha(senha);    
 
         if (user.isStatus()) {
-            UserDTO subject = new UserDTO(user.getId(), user.getEmail(), user.getUsername(), user.getRole().getDescricao());
+            UserDTO subject = new UserDTO(user.getId(), user.getEmail(), user.getNome(), user.getRole().getDescricao());
+            
             Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+            
             ObjectMapper mapper = new ObjectMapper();
             token = Jwts.builder()
                     .setIssuer("mutencaoequipamentoapi")
-                    .setSubject(mapper.writeValueAsString(subject))
+                    .setSubject(subject.id().toString())
                     .claim("id", subject.id())
                     .claim("email", subject.email())
                     .claim("nome", subject.nome())

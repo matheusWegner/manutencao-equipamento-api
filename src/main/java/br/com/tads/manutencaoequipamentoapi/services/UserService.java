@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import br.com.tads.manutencaoequipamentoapi.entities.entity.User;
+import br.com.tads.manutencaoequipamentoapi.models.entity.User;
 import br.com.tads.manutencaoequipamentoapi.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -19,8 +19,8 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Erro ao buscar usuário"));
     }
     
-    public User findByEmail (String email) {
-        return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("usuário não encontrado : " + email));
+    public User findByEmail (String email , boolean  status) {
+        return userRepository.findByEmailAndStatus(email , status).orElseThrow(() -> new EntityNotFoundException("usuário não encontrado : " + email));
     }
 
    /* public int getUltimoAcesso(User user) {

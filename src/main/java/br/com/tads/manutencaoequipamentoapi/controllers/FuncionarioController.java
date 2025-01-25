@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.tads.manutencaoequipamentoapi.commom.Response;
-import br.com.tads.manutencaoequipamentoapi.entities.dto.funcionario.FuncionarioDTO;
-import br.com.tads.manutencaoequipamentoapi.entities.dto.funcionario.FuncionarioFormDTO;
+import br.com.tads.manutencaoequipamentoapi.models.dto.funcionario.FuncionarioDTO;
+import br.com.tads.manutencaoequipamentoapi.models.dto.funcionario.FuncionarioEditDTO;
+import br.com.tads.manutencaoequipamentoapi.models.dto.funcionario.FuncionarioFormDTO;
 import br.com.tads.manutencaoequipamentoapi.exceptions.ValidationException;
 import br.com.tads.manutencaoequipamentoapi.services.FuncionarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,7 +65,7 @@ public class FuncionarioController {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = Exception.class)) }),
 			@ApiResponse(responseCode = "504", description = "Timeout", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = Exception.class)) }), })
-	public ResponseEntity<FuncionarioDTO> alterar(@RequestBody @Valid FuncionarioFormDTO funcionarioDTO , @PathVariable("id") Long id) {
+	public ResponseEntity<FuncionarioDTO> alterar(@RequestBody @Valid FuncionarioEditDTO funcionarioDTO , @PathVariable("id") Long id) {
 		return ResponseEntity.ok().body(new FuncionarioDTO(service.update(funcionarioDTO,id)));
 	}
    
@@ -82,7 +83,7 @@ public class FuncionarioController {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = Exception.class)) }),
 			@ApiResponse(responseCode = "504", description = "Timeout", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = Exception.class)) }), })
-	public ResponseEntity<Boolean> deletar(@PathVariable("id") Long id) {
+	public ResponseEntity<Boolean> deletar(@PathVariable("id") Long id) throws ValidationException {
 		return ResponseEntity.ok().body(service.delete(id));
 	}
     

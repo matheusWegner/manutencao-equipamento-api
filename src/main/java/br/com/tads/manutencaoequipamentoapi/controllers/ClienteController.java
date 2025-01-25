@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.tads.manutencaoequipamentoapi.entities.dto.cliente.ClienteDTO;
-import br.com.tads.manutencaoequipamentoapi.entities.dto.cliente.ClienteFormDTO;
+import br.com.tads.manutencaoequipamentoapi.models.dto.cliente.ClienteDTO;
+import br.com.tads.manutencaoequipamentoapi.models.dto.cliente.ClienteFormDTO;
 import br.com.tads.manutencaoequipamentoapi.exceptions.ValidationException;
 import br.com.tads.manutencaoequipamentoapi.services.ClienteService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,7 +38,7 @@ public class ClienteController {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = Exception.class)) }),
 			@ApiResponse(responseCode = "504", description = "Timeout", content = {
 					@Content(mediaType = "application/json", schema = @Schema(implementation = Exception.class)) }), })
-	public ResponseEntity<ClienteDTO> register(@RequestBody @Valid ClienteFormDTO clienteDTO) throws ValidationException , Exception {
+	public ResponseEntity<ClienteDTO> register(@Valid @RequestBody  ClienteFormDTO clienteDTO) throws ValidationException , Exception {
 		return ResponseEntity.ok().body(service.save(clienteDTO));
 	}
 }
